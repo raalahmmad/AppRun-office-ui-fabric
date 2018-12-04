@@ -1,93 +1,72 @@
 import app, { Component } from 'apprun';
-import { DefaultCallout, ActionCallout, CloseCallout, OoebCallout, PeekCallout, GeneralCallout } from './callout-types';
+import {
+  DefaultCallout,
+  ActionCallout,
+  CloseCallout,
+  OoebCallout,
+  PeekCallout,
+  GeneralCallout,
+  CalloutProps,
+  initializeValue,
+  IDefaultCallout,
+  IActionCallout,
+  ICloseCallout,
+  IOoebCalloutt,
+  IPeekCallout
+} from './callout-types';
 
-export interface IProps {
-  type?: 'DefaultCallout' | 'ActionCallout' | 'CloseCallout' | 'OoebCallout' | 'PeekCallout';
-  buttonText?: String;
-  title?: String;
-  body?: String;
-  closeButton?: Boolean;
-  disabled?: boolean;
-  label?: String;
-  onclick?: Function;
-}
-
-type calloutType = 'DefaultCallout' | 'ActionCallout' | 'CloseCallout' | 'OoebCallout' | 'PeekCallout'
-
-type actionCO<T> = T extends calloutType ? "string" : "object";
-
-
-interface IState extends IProps {}
+const CallOuts = {
+  DefaultCallout,
+  ActionCallout,
+  CloseCallout,
+  OoebCallout,
+  PeekCallout
+};
 
 declare var fabric; //use import instead
-
-export class CalloutComponent extends Component<IState> {
-  constructor(protected props: IProps) {
+export class CalloutComponent<
+  T extends IDefaultCallout | IActionCallout | ICloseCallout | IOoebCalloutt | IPeekCallout
+> extends Component<CalloutProps> {
+  constructor(protected props: T) {
     super();
   }
 
-  state: IState = {
-    type: 'DefaultCallout',
+  state: CalloutProps = {
+    type: 'ActionCallout',
     disabled: false,
     label: 'Button',
-    onclick: () => null
+    onclick: () => null,
+    body: '',
+    buttonText: '',
+    closeButton: false,
+    title: ''
   };
 
-  view = state => {   
+  view = (state: CalloutProps) => {
+    let CalOutComponent = CallOuts[state.type];
     return (
       <>
-        {this.props.type == "DefaultCallout" ?
-          <DefaultCallout
-            body="the body"
-            buttonText="button text"
-            closeButton={false}
-            title="the title"
-            type="ActionCallout"
-          /> : null}
-        
-        {this.props.type == "CloseCallout" ?
-          <CloseCallout
-            body="the body"
-            buttonText="button text"
-            closeButton={false}
-            title="the title"
-            type="ActionCallout"
-          /> : null}
-        
-        {this.props.type == "ActionCallout" ?
-          <ActionCallout
-            body="the body"
-            buttonText="button text"
-            closeButton={false}
-            title="the title"
-            type="ActionCallout"
-          /> : null}
-        
-        {this.props.type == "OoebCallout" ?
-          <OoebCallout
-            body="the body"
-            buttonText="button text"
-            closeButton={false}
-            title="the title"
-            type="ActionCallout"
-          /> : null}
-        
-        </>
+        {app.createElement(CalOutComponent, {
+          body: state.body,
+          buttonText: state.buttonText,
+          title: state.title,
+          type: state.type,
+          closeButton: state,
+          onclick: state.onclick
+        })}
+      </>
     );
   };
 
   update = {
     click: async (state, e) => {
       state.onclick(e);
-      return {
-        ...state
-      };
+      return { ...state };
     }
   };
 
   mounted = props => {
-    console.log('MOUNTED!');
-    //console.log(props);
+    initializeValue(CallOuts[props.type]);
     this.state = { ...this.state, ...props };
   };
 
@@ -103,7 +82,5 @@ export class CalloutComponent extends Component<IState> {
       var CalloutElement = Example.querySelector('.ms-Callout');
       new fabric['Callout'](CalloutElement, ExampleButtonElement, 'right');
     }
-
-    console.log(CalloutExamples);
   }
 }

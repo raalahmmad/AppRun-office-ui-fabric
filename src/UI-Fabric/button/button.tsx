@@ -40,8 +40,8 @@ export class ButtonComponent extends Component {
   }
 
   mounted = props => {
-    console.log('MOUNTED!');
-    console.log(props);
+    // console.log('MOUNTED!');
+    // console.log(props);
     this.state = { ...this.state, ...props };
   };
 }

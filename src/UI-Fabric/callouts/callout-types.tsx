@@ -1,17 +1,77 @@
 import app from 'apprun';
 
-export interface IProps {
-  type: 'DefaultCallout' | 'ActionCallout' | 'CloseCallout' | 'OoebCallout' | 'PeekCallout';
-  buttonText: String;
-  title: String;
-  body: String;
+// export interface IProps {
+//   type: 'DefaultCallout' | 'ActionCallout' | 'CloseCallout' | 'OoebCallout' | 'PeekCallout';
+//   buttonText: String;
+//   title: String;
+//   body: String;
+//   closeButton: Boolean;
+//   disabled?: boolean;
+//   label?: String;
+//   onclick?: Function;
+// }
+
+export interface IDefaultCallout {
+  type: 'DefaultCallout';
+  title: string;
+  body: string;
+  buttonText: string;
+  //closeButton: Boolean;
+  disabled?: boolean;
+  label?: String;
+  onclick?: Function;
+}
+
+export interface ICloseCallout {
+  type: 'CloseCallout';
+  title: string;
+  body: string;
+  buttonText: string;
   closeButton: Boolean;
   disabled?: boolean;
   label?: String;
   onclick?: Function;
 }
 
-export const DefaultCallout = (props: IProps) => {
+export interface IActionCallout {
+  type: 'ActionCallout';
+  title: string;
+  body: string;
+  buttonText: string;
+  command?: string;
+  closeButton: Boolean;
+  disabled?: boolean;
+  label?: String;
+  onclick?: Function;
+}
+
+export interface IOoebCalloutt {
+  type: 'OoebCallout';
+  title: string;
+  body: string;
+  buttonText: string;
+  command?: string;
+  closeButton: Boolean;
+  disabled?: boolean;
+  label?: String;
+  onclick?: Function;
+}
+
+export interface IPeekCallout {
+  type: 'PeekCallout';
+  title: string;
+  body: string;
+  buttonText: string;
+  command?: string;
+  closeButton: Boolean;
+  disabled?: boolean;
+  label?: String;
+  onclick?: Function;
+}
+
+export type CalloutProps = IDefaultCallout | ICloseCallout | IActionCallout | IOoebCalloutt | IPeekCallout;
+
+export const DefaultCallout = (props: IDefaultCallout) => {
   return (
     <div className="ms-CalloutExample">
       <div className="ms-Callout is-hidden">
@@ -38,7 +98,7 @@ export const DefaultCallout = (props: IProps) => {
   );
 };
 
-export const CloseCallout = (props: IProps) => {
+export const CloseCallout = (props: ICloseCallout) => {
   return (
     <div className="ms-CalloutExample">
       <div className="ms-Callout ms-Callout--arrowLeft  ms-Callout--close is-hidden">
@@ -70,7 +130,7 @@ export const CloseCallout = (props: IProps) => {
   );
 };
 
-export const ActionCallout = (props: IProps) => {
+export const ActionCallout = (props: IActionCallout) => {
   return (
     <div className="ms-CalloutExample">
       <div className="ms-Callout ms-Callout--actionText is-hidden">
@@ -88,11 +148,11 @@ export const ActionCallout = (props: IProps) => {
                   <span className="ms-CommandButton-icon ms-fontColor-green">
                     <i className="ms-Icon ms-Icon--CheckMark" />
                   </span>
-                  <span className="ms-CommandButton-label">Command</span>
+                  <span className="ms-CommandButton-label">{props.command}</span>
                 </button>
               </div>
               <div className="ms-CommandButton ms-CommandButton--inline">
-                <button className="ms-CommandButton-button">
+                <button className="ms-CommandButton-button" onclick={e => app.run(props.onclick())}>
                   <span className="ms-CommandButton-icon ms-fontColor-red">
                     <i className="ms-Icon ms-Icon--Clear" />
                   </span>
@@ -112,7 +172,7 @@ export const ActionCallout = (props: IProps) => {
   );
 };
 
-export const OoebCallout = (props: IProps) => {
+export const OoebCallout = (props: IOoebCalloutt) => {
   return (
     <div className="ms-CalloutExample">
       <div className="ms-Callout ms-Callout--arrowLeft  ms-Callout--OOBE is-hidden">
@@ -144,7 +204,7 @@ export const OoebCallout = (props: IProps) => {
   );
 };
 
-export const PeekCallout = (props: IProps) => {
+export const PeekCallout = (props: IPeekCallout) => {
   return (
     <div className="ms-CalloutExample">
       <div className="ms-Callout ms-Callout--arrowLeft  ms-Callout--peek is-hidden">
@@ -175,7 +235,7 @@ export const PeekCallout = (props: IProps) => {
   );
 };
 
-export const GeneralCallout = (props: IProps) => {
+export const GeneralCallout = (props: CalloutProps | any) => {
   return (
     <div className="ms-CalloutExample">
       <div className={`ms-Callout ms-Callout--${props.type} is-hidden"`}>
@@ -223,3 +283,40 @@ export const GeneralCallout = (props: IProps) => {
     </div>
   );
 };
+
+export function initializeValue(callout: CalloutProps) {
+  switch (callout.type) {
+    case 'DefaultCallout':
+      callout.body = 'Body DEFAULT';
+      break;
+    case 'ActionCallout':
+      callout.closeButton = false;
+    case 'CloseCallout':
+      callout.closeButton = false;
+    case 'OoebCallout':
+      callout.closeButton = false;
+    case 'PeekCallout':
+      callout.closeButton = false;
+    default:
+      //const shouldNotReach: never = callout;
+      break;
+  }
+}
+
+/*  -- Use this way
+function intializeValue(field: Field) {
+  switch (field.control) {
+    case "Textbox":
+      field.value = "";
+      break;
+    case "DatePicker":
+      field.value = new Date();
+      break;
+    case "NumberSlider":
+      field.value = 0;
+      break;
+    default:
+      const shouldNotReach: never = field;
+  }
+}
+*/

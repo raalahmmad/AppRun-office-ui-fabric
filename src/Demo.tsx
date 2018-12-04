@@ -18,13 +18,33 @@ export default class HomeComponent extends Component {
         <p />
         <hr />
         <CalloutComponent
+          type="DefaultCallout"
+          buttonText="General One"
+          body=" General Message body is optional. a link to learn more at
+                the bottom. "
+          title="this is title"
+          //closeButton={false}
+          label="im lable"
+        />
+        <hr />
+        <CalloutComponent
           type="OoebCallout"
           buttonText="General One"
           body=" General Message body is optional. a link to learn more at
                 the bottom. "
           title="this is title"
-          closeButton={false}
           label="im lable"
+          closeButton={true}
+        />
+        <CalloutComponent
+          type="ActionCallout"
+          body="Action"
+          buttonText="Action"
+          label="Action"
+          title="Action"
+          onclick={() => console.log('CLICKED')}
+          closeButton={true}
+          command="Action"
         />
       </div>
     );
